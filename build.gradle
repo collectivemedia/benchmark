@@ -1,7 +1,6 @@
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
-apply plugin: 'findbugs'
 apply plugin: 'pitest'
 apply plugin: 'jacoco'
 
@@ -44,10 +43,6 @@ buildscript {
             name = 'GitHub'
             addArtifactPattern 'http://cloud.github.com/downloads/szpak/[module]/[module]-[revision].[ext]'
         }
-        maven {
-            url 'http://repository.jetbrains.com/all'
-        }
-
     }
     dependencies {
         classpath 'com.github.abirmingham:gradle-jacoco-plugin:1.2'
@@ -68,10 +63,6 @@ test {
     }
 }
 
-[findbugsMain, findbugsTest]*.reports {
-    xml.enabled false
-    html.enabled true
-}
 
 
 pitest {
@@ -119,5 +110,5 @@ task findUpdates << {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.5'
+    gradleVersion = '1.7'
 }
