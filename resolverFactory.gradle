@@ -26,5 +26,3 @@ class ResolverFactory {
         }
     }
 }
-
-project.extensions.create("resolverFactory", ResolverFactory)
