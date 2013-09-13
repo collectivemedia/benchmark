@@ -1,4 +1,5 @@
 apply plugin: 'java'
+apply plugin: 'maven'
 apply plugin: 'idea'
 apply plugin: 'eclipse'
 apply plugin: 'pitest'
@@ -9,6 +10,9 @@ targetCompatibility = "1.7"
 
 repositories {
     mavenCentral()
+    maven {
+        url "http://nexus.collective-media.net/content/groups/public/"
+    }
 }
 
 dependencies {
@@ -29,6 +33,10 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 clean.doLast {
     project.delete('generated')
+}
+
+artifacts {
+    archives sourcesJar
 }
 
 buildscript {
@@ -104,6 +112,16 @@ task findUpdates << {
                     }
                     checked[dependency] = true
                 }
+            }
+        }
+    }
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "http://nexus.collective-media.net/content/repositories/snapshots") {
+                authentication(userName: "deployment", password: "d3pl0ym3")
             }
         }
     }
