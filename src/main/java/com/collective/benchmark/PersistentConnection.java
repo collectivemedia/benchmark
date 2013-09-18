@@ -26,10 +26,6 @@ public class PersistentConnection {
         send();
     }
 
-    public void stop() {
-        run = false;
-    }
-
     private void send() {
         if (!run || !requestProvider.canProvide())
             return;
