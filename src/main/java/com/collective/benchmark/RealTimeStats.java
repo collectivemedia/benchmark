@@ -1,8 +1,8 @@
 package com.collective.benchmark;
 
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
 class RealTimeStats {
@@ -11,5 +11,5 @@ class RealTimeStats {
     final AtomicLong maxTime = new AtomicLong();
     final AtomicLong timeSum = new AtomicLong();
     final AtomicLong minTime = new AtomicLong(Long.MAX_VALUE);
-    final List<Long> allTimes = new ArrayList<>();
+    final Queue<Long> allTimes = new ConcurrentLinkedQueue<>();
 }
