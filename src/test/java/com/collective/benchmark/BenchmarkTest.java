@@ -64,7 +64,6 @@ public class BenchmarkTest {
             @Override
             protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
                 gotReqs.incrementAndGet();
-                resp.setStatus(200);
             }
         }), "/*");
         RequestProvider requestProvider = new StaticProvider("http://127.0.0.1:"+PORT+"/any", 10);
@@ -95,6 +94,28 @@ public class BenchmarkTest {
         assertThat(stats.allTimes).hasSize(10);
     }
 
+    @Test
+    public void canDoHighConcurrency() throws Exception {
+        final AtomicInteger concurrency = new AtomicInteger();
+        final int[] maxConcurrency = {0};
+        context.addServlet(new ServletHolder(new HttpServlet() {
+            @Override
+            protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+                maxConcurrency[0] = Math.max(maxConcurrency[0],concurrency.incrementAndGet());
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException ignored) {
+                }
+                concurrency.decrementAndGet();
+            }
+        }), "/*");
+
+        RequestProvider requestProvider = new StaticProvider("http://127.0.0.1:"+PORT+"/any", 10000);
+        Benchmark benchmark = new Benchmark(requestProvider, 100);
+        Future<BenchmarkStats> run = benchmark.run();
+        run.get();
+        assertThat(maxConcurrency[0]).isEqualTo(100);
+    }
     @Test
     public void futureWontReturnAsLongAsProviderCanProvide() throws Exception {
         RequestProvider requestProvider = mock(RequestProvider.class);

@@ -38,6 +38,10 @@ public class Benchmark {
         this(requestProvider, concurrentConnections, maxConnections, null, contentListener);
     }
 
+    public Benchmark(RequestProvider requestProvider, int concurrency) {
+        this(requestProvider, concurrency, concurrency*2);
+    }
+
     private void stop(HttpClient client, Timer timer) {
         timer.cancel();
         try {
