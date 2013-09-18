@@ -89,6 +89,7 @@ public class Benchmark {
                     while (requestProvider.canProvide()) {
                         Thread.sleep(10);
                     }
+                    Thread.sleep(10); // this is a hotfix to make sure we do all requests
                     return new BenchmarkStats(currentStats.requests.get(), currentStats.failedRequests.get(), Lists.newArrayList(currentStats.allTimes), System.currentTimeMillis() - start);
                 } finally {
                     stop(client, timer);
@@ -106,6 +107,7 @@ public class Benchmark {
                             throw new TimeoutException("benchmark not finished");
                         }
                     }
+                    Thread.sleep(10); // this is a hotfix to make sure we do all requests
                     return new BenchmarkStats(currentStats.requests.get(), currentStats.failedRequests.get(), Lists.newArrayList(currentStats.allTimes), System.currentTimeMillis() - start);
                 } finally {
                     stop(client, timer);

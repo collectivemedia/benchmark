@@ -35,27 +35,17 @@ public class BenchmarkTest {
 
     private static final int PORT = 9999;
     private Server server;
-    private AtomicInteger gotReqs;
-    private int statusCode;
+    private ServletContextHandler context;
 
     @Before
     public void setUp() throws Exception {
-        gotReqs = new AtomicInteger();
         server = new Server();
         ServerConnector connector = new ServerConnector(server);
         connector.setPort(PORT);
         server.setConnectors(new ServerConnector[]{connector});
 
-        ServletContextHandler context = new ServletContextHandler();
+        context = new ServletContextHandler();
         context.setContextPath("/");
-        context.addServlet(new ServletHolder(new HttpServlet() {
-            @Override
-            protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-                gotReqs.incrementAndGet();
-                resp.getWriter().write("YO");
-                resp.setStatus(statusCode);
-            }
-        }), "/valid/*");
         server.setHandler(context);
         server.start();
     }
@@ -68,8 +58,16 @@ public class BenchmarkTest {
 
     @Test
     public void canRunBenchmarkWithStaticProvider() throws Exception {
-        statusCode = 200;
-        RequestProvider requestProvider = new StaticProvider("http://127.0.0.1:"+PORT+"/valid/blah", 10);
+        final AtomicInteger gotReqs = new AtomicInteger();
+
+        context.addServlet(new ServletHolder(new HttpServlet() {
+            @Override
+            protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+                gotReqs.incrementAndGet();
+                resp.setStatus(200);
+            }
+        }), "/*");
+        RequestProvider requestProvider = new StaticProvider("http://127.0.0.1:"+PORT+"/any", 10);
         Benchmark benchmark = new Benchmark(requestProvider, 1, 100);
         Future<BenchmarkStats> run = benchmark.run();
         BenchmarkStats stats = run.get();
@@ -81,8 +79,14 @@ public class BenchmarkTest {
 
     @Test
     public void canCountErrors() throws Exception {
-        statusCode = 500;
-        RequestProvider requestProvider = new StaticProvider("http://127.0.0.1:"+PORT+"/notFound", 10);
+        context.addServlet(new ServletHolder(new HttpServlet() {
+            @Override
+            protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+                resp.setStatus(500);
+            }
+        }), "/*");
+
+        RequestProvider requestProvider = new StaticProvider("http://127.0.0.1:"+PORT+"/any", 10);
         Benchmark benchmark = new Benchmark(requestProvider, 1, 100);
         Future<BenchmarkStats> run = benchmark.run();
         BenchmarkStats stats = run.get();
