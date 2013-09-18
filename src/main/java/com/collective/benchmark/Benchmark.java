@@ -1,5 +1,6 @@
 package com.collective.benchmark;
 
+import com.google.common.collect.Lists;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.Response;
 
@@ -88,7 +89,7 @@ public class Benchmark {
                     while (requestProvider.canProvide()) {
                         Thread.sleep(10);
                     }
-                    return new BenchmarkStats(currentStats.requests.get(), currentStats.failedRequests.get(), currentStats.allTimes, System.currentTimeMillis() - start);
+                    return new BenchmarkStats(currentStats.requests.get(), currentStats.failedRequests.get(), Lists.newArrayList(currentStats.allTimes), System.currentTimeMillis() - start);
                 } finally {
                     stop(client, timer);
                 }
@@ -105,7 +106,7 @@ public class Benchmark {
                             throw new TimeoutException("benchmark not finished");
                         }
                     }
-                    return new BenchmarkStats(currentStats.requests.get(), currentStats.failedRequests.get(), currentStats.allTimes, System.currentTimeMillis() - start);
+                    return new BenchmarkStats(currentStats.requests.get(), currentStats.failedRequests.get(), Lists.newArrayList(currentStats.allTimes), System.currentTimeMillis() - start);
                 } finally {
                     stop(client, timer);
                 }
