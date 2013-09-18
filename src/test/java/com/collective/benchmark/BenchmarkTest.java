@@ -111,10 +111,10 @@ public class BenchmarkTest {
         }), "/*");
 
         RequestProvider requestProvider = new StaticProvider("http://127.0.0.1:"+PORT+"/any", 10000);
-        Benchmark benchmark = new Benchmark(requestProvider, 100);
+        Benchmark benchmark = new Benchmark(requestProvider, 50);
         Future<BenchmarkStats> run = benchmark.run();
         run.get();
-        assertThat(maxConcurrency[0]).isEqualTo(100);
+        assertThat(maxConcurrency[0]).isEqualTo(50);
     }
     @Test
     public void futureWontReturnAsLongAsProviderCanProvide() throws Exception {
