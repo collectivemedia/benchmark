@@ -26,10 +26,6 @@ public class PersistentConnection {
         send();
     }
 
-    public void stop() {
-        run = false;
-    }
-
     private void send() {
         if (!run || !requestProvider.canProvide())
             return;
@@ -46,7 +42,8 @@ public class PersistentConnection {
                 @Override
                 public void onComplete(Result result) {
                     long duration = System.currentTimeMillis() - time;
-                    if (result.isFailed()) {
+                    send();
+                    if (result.isFailed() || result.getResponse().getStatus() != 200) {
                         realTimeStats.failedRequests.incrementAndGet();
                     }
                     realTimeStats.allTimes.add(duration);
@@ -54,7 +51,6 @@ public class PersistentConnection {
                     realTimeStats.maxTime.set(Math.max(realTimeStats.maxTime.get(), duration));
                     realTimeStats.minTime.set(Math.min(realTimeStats.minTime.get(), duration));
                     realTimeStats.timeSum.addAndGet(duration);
-                    send();
                 }
             });
         } else {
