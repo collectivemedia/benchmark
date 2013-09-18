@@ -46,7 +46,7 @@ public class PersistentConnection {
                 @Override
                 public void onComplete(Result result) {
                     long duration = System.currentTimeMillis() - time;
-                    if (result.isFailed()) {
+                    if (result.isFailed() || result.getResponse().getStatus() != 200) {
                         realTimeStats.failedRequests.incrementAndGet();
                     }
                     realTimeStats.allTimes.add(duration);
