@@ -9,6 +9,7 @@ sourceCompatibility = "1.7"
 targetCompatibility = "1.7"
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven {
         url "http://nexus.collective-media.net/content/groups/public/"
@@ -18,6 +19,7 @@ repositories {
 dependencies {
     // jetty
     compile group: 'org.eclipse.jetty', name: 'jetty-client', version: '9.0.4.v20130625'
+    compile group: 'com.google.guava', name: 'guava', version: '15.0'
 
     // test deps
     testCompile group: 'org.eclipse.jetty', name: 'jetty-servlet', version: '9.0.4.v20130625'
